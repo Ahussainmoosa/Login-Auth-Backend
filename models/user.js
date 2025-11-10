@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
   username: {
     type: String,
-    require: true,
+    required: true,
   },
   hashedPassword: {
     type: String,
@@ -30,7 +30,18 @@ const courseSchema = mongoose.Schema({
   }],
 });
 
-
+const assignmentSchema = mongoose.Schema({
+  title: String,
+  content: String,
+  dueDate: Date,
+  course:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course'},
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+});
   
 
 userSchema.set('toJSON', {
@@ -40,5 +51,8 @@ userSchema.set('toJSON', {
 });
 
 const User = mongoose.model('User', userSchema);
+const Course = mongoose.model('Course', courseSchema);
+const Assignment = mongoose.model('Assignment', assignmentSchema);
 
-module.exports = User;
+
+module.exports = {User, Course, Assignment};
