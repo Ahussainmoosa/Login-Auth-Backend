@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 //create new course
-router.get('/new', async(req, res) => {
+router.post('/new', async(req, res) => {
     try{
         const createdCourse = await Course.create(req.body);
         res.status(201).json(createdCourse);
@@ -49,6 +49,34 @@ router.get('/:courseId', async (req, res) => {
         }
     }
 });
+
+//edit form
+router.get('/:courseId/edit', async(req, res) => {
+    try{
+        const course = await Course.findById(req.params.courseId);
+        if (!course){
+            res.status(404);
+            throw new Error('Course not found');
+        }
+
+    } catch (err){
+        res.status(500).json({err: 'Something went wrong'});
+        console.log(err);
+    }
+});
+
+
+//submit form
+router.post('/', async(req, res) => {
+    try{
+        const createdCourse = await Course.create(req.body);
+        res.status(201).json(createdCourse);
+
+    } catch (err){
+        res.status(500).json({err: 'Something went wrong'});
+        console.log(err);
+    }
+})
 
 //update
 router.put('/:courseId', async (req, res) => {
