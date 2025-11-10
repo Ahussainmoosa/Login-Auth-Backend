@@ -89,3 +89,5 @@ router.delete('/:courseId', async (req, res) => {
     
 
 });
+
+module.exports = router;
