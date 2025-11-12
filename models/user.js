@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
   username: {
     type: String,
-    require: true,
+    required: true,
   },
   hashedPassword: {
     type: String,
@@ -12,10 +12,11 @@ const userSchema = mongoose.Schema({
   role:{
     type:String ,
     required: true ,
-    enum:['school','user'],
-    default: 'user',
+    enum:['school', 'student'],
+    default: 'student',
   },
 });
+  
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
