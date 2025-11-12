@@ -3,13 +3,20 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
   username: {
     type: String,
-    require: true,
+    required: true,
   },
   hashedPassword: {
     type: String,
     require: true,
   },
+  role:{
+    type:String ,
+    required: true ,
+    enum:['school','teacher', 'student'],
+    default: 'student',
+  },
 });
+  
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
