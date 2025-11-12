@@ -7,7 +7,7 @@ async function admin() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
 
-    const existingAdmin = await User.findOne({ role: "admin" });
+    const existingAdmin = await User.findOne({ role: "school" });
     if (existingAdmin) {
       console.log("⚠️ Admin already exists:", existingAdmin.email);
       process.exit();
@@ -21,7 +21,7 @@ async function admin() {
       username: "Ali admin",
       //email: "ALi123@example.com",
       hashedPassword: hashedPassword,
-      role: "admin",
+      role: "school",
     });
 
     await adminUser.save();
