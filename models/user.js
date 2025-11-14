@@ -4,10 +4,11 @@ const userSchema = mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   hashedPassword: {
     type: String,
-    require: true,
+    required: true,
   },
   role:{
     type:String ,
