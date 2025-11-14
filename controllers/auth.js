@@ -19,7 +19,7 @@ router.post('/sign-up', async (req, res) => {
     const newUser = await User.create({
       username: req.body.username,
       hashedPassword,
-      role: req.body.role || 'user',
+      role: req.body.role || 'student',
     });
 
     const payload = {
