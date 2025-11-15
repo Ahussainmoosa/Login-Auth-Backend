@@ -2,10 +2,13 @@ const express = require("express");
 const router = express.Router();
 const isSignedIn = require("../middleware/is-signed-in.js");
 const adminPerm = require("../middleware/is-admin.js");
+const Course = require('../models/course.js');
+const Assignment = require('../models/assignment.js');
 
 //all below routes require admin privilege
-router.use(adminPerm);
 router.use(isSignedIn);
+router.use(adminPerm);
+
 
 //COURSES
 //create new course
@@ -66,7 +69,7 @@ router.delete('/:courseId', async (req, res) => {
             res.status(404);
             throw new Error('Course not found');
         }
-        res.status(204);
+        res.status(204).json;
     } catch (err){
         console.log(err);
         res.status(500).json({err:'Something went wrong'})
@@ -96,6 +99,8 @@ router.get('/:assignmentId/edit', async (req, res) => {
             res.status(404);
             throw new Error('Assignment not found');
         }
+        res.status(200).json(assignment);
+        
     } catch (err) {
         res.status(500).json({ err: 'Something went wrong' });
         console.log(err);
