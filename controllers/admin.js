@@ -13,16 +13,7 @@ router.use(adminPerm);
 
 
 //ASSIGNMENTS
-// Create new assignment
-router.post('/new', async (req, res) => {
-    try {
-        const createdAssignment = await Assignment.create(req.body);
-        res.status(201).json(createdAssignment);
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ err: 'Something went wrong' });
-    }
-});
+
 
 // Edit form
 router.get('/:assignmentId/edit', async (req, res) => {
