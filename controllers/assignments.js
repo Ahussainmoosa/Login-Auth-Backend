@@ -47,7 +47,7 @@ router.get('/course/:courseId', async (req, res) => {
 // Single assignment shown
 router.get('/:assignmentId', async (req, res) => {
     try {
-        const foundAssignment = await Assignment.findById(req.params.assignmentId);
+        const foundAssignment = await Assignment.findById(req.params.assignmentId).populate('course', 'title');
         if (!foundAssignment) {
             res.status(404);
             throw new Error('Assignment not found');
