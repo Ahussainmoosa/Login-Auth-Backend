@@ -1,24 +1,26 @@
 const Assignment = require('../models/assignment.js');
-const User = require('../models/user.js'); // Fixed: assuming you meant User model
+const isSignedIn = require("../middleware/is-signed-in.js");
+const adminPerm = require("../middleware/is-admin.js");
 const express = require('express');
 const router = express.Router();
 
-// Create new assignment
-router.post('/new', async (req, res) => {
-    try {
-        const createdAssignment = await Assignment.create(req.body);
-        res.status(201).json(createdAssignment);
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ err: 'Something went wrong' });
-    }
-});
 
 // Index of assignments
 router.get('/', async (req, res) => {
     try {
         const foundAssignments = await Assignment.find();
         res.status(200).json(foundAssignments);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ err: 'Something went wrong' });
+    }
+});
+
+// Create new assignment
+router.post('/new', isSignedIn, adminPerm, async (req, res) => {
+    try {
+        const createdAssignment = await Assignment.create(req.body);
+        res.status(201).json(createdAssignment);
     } catch (err) {
         console.log(err);
         res.status(500).json({ err: 'Something went wrong' });
@@ -46,13 +48,15 @@ router.get('/:assignmentId', async (req, res) => {
 });
 
 // Edit form
-router.get('/:assignmentId/edit', async (req, res) => {
+router.get('/:assignmentId/edit', isSignedIn, adminPerm, async (req, res) => {
     try {
         const assignment = await Assignment.findById(req.params.assignmentId);
         if (!assignment) {
             res.status(404);
             throw new Error('Assignment not found');
         }
+        res.status(200).json(assignment);
+
     } catch (err) {
         res.status(500).json({ err: 'Something went wrong' });
         console.log(err);
@@ -60,7 +64,7 @@ router.get('/:assignmentId/edit', async (req, res) => {
 });
 
 // Submit form
-router.post('/', async (req, res) => {
+router.post('/', isSignedIn, adminPerm, async (req, res) => {
     try {
         const createdAssignment = await Assignment.create(req.body);
         res.status(201).json(createdAssignment);
@@ -71,7 +75,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update
-router.put('/:assignmentId', async (req, res) => {
+router.put('/:assignmentId',isSignedIn, adminPerm, async (req, res) => {
     try {
         const updatedAssignment = await Assignment.findByIdAndUpdate(
             req.params.assignmentId,
@@ -95,7 +99,7 @@ router.put('/:assignmentId', async (req, res) => {
 });
 
 // Delete
-router.delete('/:assignmentId', async (req, res) => {
+router.delete('/:assignmentId', isSignedIn, adminPerm, async (req, res) => {
     try {
         const assignment = await Assignment.findByIdAndDelete(req.params.assignmentId);
         if (!assignment) {
@@ -108,5 +112,6 @@ router.delete('/:assignmentId', async (req, res) => {
         res.status(500).json({ err: 'Something went wrong' });
     }
 });
+
 
 module.exports = router;

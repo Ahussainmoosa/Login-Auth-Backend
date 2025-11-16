@@ -54,7 +54,7 @@ router.post('/sign-in', async (req, res) => {
     const payload = {
       username: userInDatabase.username,
       _id: userInDatabase._id,
-      role: userInDatabase.role,
+      role: userInDatabase.role
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);

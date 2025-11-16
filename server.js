@@ -16,7 +16,7 @@ const testJwtRouter = require('./controllers/test-jwt');
 const authCtrl = require('./controllers/auth');
 const usersCtrl = require('./controllers/users');
 const courseCtrl = require('./controllers/courses.js')
-const adminRoutes = require('./controllers/admin.js');
+const assignmentCtrl = require('./controllers/assignments.js')
 
 
 // MiddleWare
@@ -39,8 +39,8 @@ app.use('/test-jwt', testJwtRouter);
 // Protected Routes
 app.use(verifyToken);
 app.use('/users', usersCtrl);
-app.use('/admin',adminRoutes);
 app.use('/courses', courseCtrl)
+app.use('/assignments', assignmentCtrl);
 
 
 app.listen(PORT, () => {

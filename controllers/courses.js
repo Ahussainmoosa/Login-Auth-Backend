@@ -1,4 +1,6 @@
 const Course = require('../models/course.js');
+const isSignedIn = require("../middleware/is-signed-in.js");
+const adminPerm = require("../middleware/is-admin.js");
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
@@ -17,7 +19,7 @@ router.get('/', async (req, res) => {
 }); 
 
 //create new course
-router.post('/new', async(req, res) => {
+router.post('/new', isSignedIn, adminPerm, async(req, res) => {
     try{
         const createdCourse = await Course.create(req.body);
         res.status(201).json(createdCourse);
@@ -72,25 +74,9 @@ router.get('/:courseId', async (req, res) => {
     }
 });
 
-//delete
-router.delete('/:courseId', async (req, res) => {
-    try{
-        const course = await Course.findByIdAndDelete(req.params.courseId);
-        if (!course){
-            res.status(404);
-            throw new Error('Course not found');
-        }
-        res.status(204);
-    } catch (err){
-        console.log(err);
-        res.status(500).json({err:'Something went wrong'})
-    }
-    
-
-});
 
 //edit form
-router.get('/:courseId/edit', async(req, res) => {
+router.get('/:courseId/edit', isSignedIn, adminPerm, async(req, res) => {
     try{
         const course = await Course.findById(req.params.courseId);
         if (!course){
@@ -105,7 +91,7 @@ router.get('/:courseId/edit', async(req, res) => {
 });
 
 //update
-router.put('/:courseId', async (req, res) => {
+router.put('/:courseId', isSignedIn, adminPerm, async (req, res) => {
     try{
         const updatedCourse = await Course.findByIdAndUpdate(req.params.courseId, req.body, {
             new: true,
@@ -128,6 +114,20 @@ router.put('/:courseId', async (req, res) => {
     }
 });
 
+//delete
+router.delete('/:courseId', isSignedIn, adminPerm, async (req, res) => {
+    try{
+        const course = await Course.findByIdAndDelete(req.params.courseId);
+        if (!course){
+            res.status(404);
+            throw new Error('Course not found');
+        }
+        res.status(204).json;
+    } catch (err){
+        console.log(err);
+        res.status(500).json({err:'Something went wrong'})
+    }
+    
 
 
 module.exports = router;
