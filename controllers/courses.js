@@ -122,12 +122,12 @@ router.delete('/:courseId', isSignedIn, adminPerm, async (req, res) => {
             res.status(404);
             throw new Error('Course not found');
         }
-        res.status(204).json;
+        res.status(200).json(course);
     } catch (err){
         console.log(err);
         res.status(500).json({err:'Something went wrong'})
     }
     
-
+})
 
 module.exports = router;
