@@ -23,6 +23,7 @@ async function admin() {
       hashedPassword: hashedPassword,
       role: "school",
     });
+    
 
     await adminUser.save();
     console.log("Admin user created:", adminUser.email);
