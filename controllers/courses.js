@@ -3,6 +3,7 @@ const isSignedIn = require("../middleware/is-signed-in.js");
 const adminPerm = require("../middleware/is-admin.js");
 const express = require('express');
 const mongoose = require('mongoose');
+const Assignment = require('../models/assignment.js');
 const router = express.Router();
 
 //index of courses
@@ -73,6 +74,17 @@ router.get('/:courseId', async (req, res) => {
     }
 });
 
+router.get('/:courseId/assignments', async (req, res) => {
+    try{
+        const courseAssignments = await Assignment.find({course: req.params.courseId}).populate('course', 'title');
+        
+        res.status(200).json(courseAssignments);
+
+    } catch (err){
+        res.status(500).json({err: 'Something went wrong'});
+        console.log(err);
+    }
+})
 
 //edit form
 router.get('/:courseId/edit', isSignedIn, adminPerm, async(req, res) => {

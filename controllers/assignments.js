@@ -19,12 +19,29 @@ router.get('/', async (req, res) => {
 // Create new assignment
 router.post('/new', isSignedIn, adminPerm, async (req, res) => {
     try {
-        const createdAssignment = await Assignment.create(req.body);
+        const {title, content, course} = req.body;
+
+        const createdAssignment = await Assignment.create({
+            title,
+            content,
+            course,
+        });
         res.status(201).json(createdAssignment);
     } catch (err) {
         console.log(err);
         res.status(500).json({ err: 'Something went wrong' });
     }
+});
+
+router.get('/course/:courseId', async (req, res) => {
+  try {
+    const courseAssignments = await Assignment.find({ course: req.params.courseId }).populate('course', 'title'); 
+
+    res.status(200).json(courseAssignments);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ err: 'Something went wrong' });
+  }
 });
 
 // Single assignment shown
@@ -63,16 +80,6 @@ router.get('/:assignmentId/edit', isSignedIn, adminPerm, async (req, res) => {
     }
 });
 
-// Submit form
-router.post('/', isSignedIn, adminPerm, async (req, res) => {
-    try {
-        const createdAssignment = await Assignment.create(req.body);
-        res.status(201).json(createdAssignment);
-    } catch (err) {
-        res.status(500).json({ err: 'Something went wrong' });
-        console.log(err);
-    }
-});
 
 // Update
 router.put('/:assignmentId',isSignedIn, adminPerm, async (req, res) => {
