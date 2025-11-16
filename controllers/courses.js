@@ -32,7 +32,7 @@ router.post('/new', isSignedIn, adminPerm, async(req, res) => {
 //single course shown
 router.get('/:courseId', async (req, res) => {
     try{
-        const foundCourse = await Course.findById(req.params.courseId); 
+        const foundCourse = await Course.findById(req.params.courseId).populate('enrolledStudents', 'username'); 
         if(!foundCourse){
             res.status(404);
             throw new Error('Course not found');
@@ -98,7 +98,7 @@ router.delete('/:courseId', isSignedIn, adminPerm, async (req, res) => {
             res.status(404);
             throw new Error('Course not found');
         }
-        res.status(204).json;
+        res.status(204).end;
     } catch (err){
         console.log(err);
         res.status(500).json({err:'Something went wrong'})
