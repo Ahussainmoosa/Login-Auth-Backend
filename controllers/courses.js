@@ -2,6 +2,7 @@ const Course = require('../models/course.js');
 const isSignedIn = require("../middleware/is-signed-in.js");
 const adminPerm = require("../middleware/is-admin.js");
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 
 //index of courses
@@ -32,13 +33,35 @@ router.post('/new', isSignedIn, adminPerm, async(req, res) => {
 //single course shown
 router.get('/:courseId', async (req, res) => {
     try{
-        const foundCourse = await Course.findById(req.params.courseId); 
+        const foundCourse = await Course.findById(req.params.courseId)
+        .populate('enrolledStudents', 'username'); 
         if(!foundCourse){
             res.status(404);
             throw new Error('Course not found');
         }
+        if (!req.user) {
+            // Unauthenticated user attempting to access a protected course
+            return res.status(401).json({ error: 'Authentication required to view course details.' });
+        }
+        //cheak the user id availbe
+        const currentUserId = req.user.id || req.user._id; 
+        const currentUserRole = req.user.role;
+        const userIdAsObjectId = new mongoose.Types.ObjectId(currentUserId);
+        
+        const isEnrolled = foundCourse.enrolledStudents.some(
+            (enrolledId) => enrolledId.equals(userIdAsObjectId)
+        );
+        const isAdminOrSchool = currentUserRole === 'school';
 
-        res.status(200).json(foundCourse);
+        // cheack if the user Id available in the array
+        if (!isAdminOrSchool && !isEnrolled) {
+            return res.status(403).json({ 
+                error: 'Access Denied', 
+                message: 'You are not added to this course.' 
+            });
+        }
+        const populatedCourse = await foundCourse.populate('enrolledStudents', 'username');
+        res.status(200).json(populatedCourse);
 
     } catch (err) {
         if (res.statusCode === 404){
@@ -72,6 +95,7 @@ router.put('/:courseId', isSignedIn, adminPerm, async (req, res) => {
     try{
         const updatedCourse = await Course.findByIdAndUpdate(req.params.courseId, req.body, {
             new: true,
+            runValidators: true,
         });
         if (!updatedCourse){
             res.status(404);
@@ -83,7 +107,7 @@ router.put('/:courseId', isSignedIn, adminPerm, async (req, res) => {
         if(res.statusCode === 404){
             res.json({err:'Something went wrong'})
             console.log(err);
-        } else {
+        }else {
             res.status(500).json({err:'Something went wrong'})
             console.log(err);
         }
@@ -105,6 +129,5 @@ router.delete('/:courseId', isSignedIn, adminPerm, async (req, res) => {
     }
     
 
-});
 
 module.exports = router;
