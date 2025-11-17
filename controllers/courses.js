@@ -53,13 +53,6 @@ router.get('/:courseId', async (req, res) => {
         );
         const isAdminOrSchool = currentUserRole === 'school';
 
-        // cheack if the user Id available in the array
-        if (!isAdminOrSchool && !isEnrolled) {
-            return res.status(403).json({ 
-                error: 'Access Denied', 
-                message: 'You are not added to this course.' 
-            });
-        }
         const populatedCourse = await foundCourse.populate('enrolledStudents', 'username');
         res.status(200).json(populatedCourse);
 
